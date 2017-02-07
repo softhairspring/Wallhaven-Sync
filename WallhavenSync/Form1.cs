@@ -36,7 +36,7 @@ namespace WallhavenSyncNm
 
         public void startScrapingSelected()
         {
-            this.listBoxVerbose.Items.Add("Syncing " + this.listBoxFavCategories.SelectedItem.ToString());
+            this.listBoxVerbose.Items.Insert(0,"Syncing " + this.listBoxFavCategories.SelectedItem.ToString());
 
             Console.WriteLine("Fav selected:" + this.listBoxFavCategories.SelectedItem.ToString());
             string saveDir = this.textBoxSaveDir.Text + "\\" + this.listBoxFavCategories.SelectedItem.ToString();
@@ -44,7 +44,7 @@ namespace WallhavenSyncNm
           
             manager.scrapeFavourite(this.listBoxFavCategories.SelectedItem.ToString(), saveDir);
 
-            this.listBoxVerbose.Items.Add("Done.");
+            this.listBoxVerbose.Items.Insert(0,"Done.");
         }
 
 
@@ -65,7 +65,7 @@ namespace WallhavenSyncNm
                         this.listBoxFavCategories.SelectedItem = this.listBoxFavCategories.Items[0];
                     else
                         return;
-                this.listBoxVerbose.Items.Add("Syncing " + this.listBoxFavCategories.SelectedItem.ToString());
+                this.listBoxVerbose.Items.Insert(0, "Syncing " + this.listBoxFavCategories.SelectedItem.ToString());
                 category = this.listBoxFavCategories.SelectedItem.ToString();
                 savedir = this.textBoxSaveDir.Text;
                 this.buttonDownload.Enabled = false;
@@ -79,14 +79,37 @@ namespace WallhavenSyncNm
 
             this.Invoke((MethodInvoker)delegate
             {
-                this.listBoxVerbose.Items.Add("Done.");
+                this.listBoxVerbose.Items.Insert(0, "Done.");
                 this.buttonDownload.Enabled = true;
             });
             
         }
 
+        public void startScrapingAllWallhavenFavThreadSafe()
+        {
 
+            string category="";
+            string savedir = "";
+            this.Invoke((MethodInvoker)delegate
+            {
 
+                this.listBoxVerbose.Items.Insert(0, "Syncing all folders");
+                savedir = this.textBoxSaveDir.Text;
+                this.buttonDownloadAll.Enabled = false;
+            });
+
+            string saveDir = savedir  + "\\";
+
+            manager.scrapeAllFavourites(saveDir);
+
+            this.Invoke((MethodInvoker)delegate
+            {
+                this.listBoxVerbose.Items.Insert(0, "Done.");
+                this.buttonDownloadAll.Enabled = true;
+            });
+            
+        }
+        
 
         /// <summary>
         /// start scraping selected folder
@@ -130,8 +153,17 @@ namespace WallhavenSyncNm
             }
             catch (Exception exc)
             {
-                this.listBoxVerbose.Items.Add("Couln't open folder, it probably doesn't exist.");
+                this.listBoxVerbose.Items.Insert(0, "Couln't open folder, it probably doesn't exist.");
             }
+        }
+
+        private void buttonDownloadAll_Click(object sender, EventArgs e)
+        {
+            //Thread oThread = new Thread(() => this.manager.scrapeTag("cars", this.textBoxSaveDir.Text));
+            //Thread oThread = new Thread( new ParameterizedThreadStart(this.manager.scrapeTag));//( "car", this.textBoxSaveDir.Text)
+            Thread oThread = new Thread(new ThreadStart(startScrapingAllWallhavenFavThreadSafe));
+            oThread.Start();
+            
         }
     }
 }

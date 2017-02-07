@@ -89,6 +89,27 @@ namespace WallhavenSyncNm.src
             scrapper.scrapeDirectory(getFavCategoryUrl(favcategoryname), savedirectory);
         }
 
+        /**
+         * 
+         *  iterate all fav folders
+         *  */
+        public void scrapeAllFavourites(string savedirectory)
+        {
+            for(int i=0;i<favcategoriesurls.Count;i++)
+            {
+                string subdir = favcategories[i];
+                scrapper.scrapeDirectory(favcategoriesurls[i], savedirectory + subdir);
+            }
+        }
+
+        /// no no senore~ do not use
+        public void scrapeTag(string tagcategoryname, string savedirectory)
+        {
+
+            scrapper.scrapeDirectory("https://alpha.wallhaven.cc/search?q=\"" + (tagcategoryname) + "\"&categories=111&purity=000", savedirectory);
+        }
+
+
         public Boolean isLoggedIn()
         {
             return ISLOGGEDIN;

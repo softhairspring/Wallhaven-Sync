@@ -14,6 +14,7 @@ namespace WallhavenSyncNm.src
         private BrowserSession browser;
         private System.Net.WebClient webclient;
         private const string URLPAGE = "?page=";
+        private const string URLPAGEAND = "&page=";
         private const string URLDIRECT = "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-";
         private const string JPG = ".jpg";
 
@@ -35,7 +36,7 @@ namespace WallhavenSyncNm.src
         {
             int pagec = 0;
             //foreach (HtmlAgilityPack.HtmlNode node in doc.DocumentNode.SelectNodes("@thumb-listing-page-num"))
-            HtmlAgilityPack.HtmlNode node = doc.DocumentNode.SelectSingleNode("//h2[@class='thumb-listing-page-header']");
+            HtmlAgilityPack.HtmlNode node = doc.DocumentNode.SelectSingleNode("//header[@class='thumb-listing-page-header']");
             
                 if (node == null)
                     return 1;   //return 1 cause small amount of wallpapers dont get pagecount
@@ -43,7 +44,7 @@ namespace WallhavenSyncNm.src
                 if (tokens.Count() <= 0)
                     return 0;
                 pagec = Int32.Parse(tokens.Last());
-            
+ 
                 return pagec;
         }
 
@@ -98,7 +99,15 @@ namespace WallhavenSyncNm.src
                     break;
                 }
 
-                page = browser.Get(urldir + URLPAGE + pagenr.ToString());
+                if (urldir.Contains("search?q"))//make url for basic search url
+                {
+                    page = browser.Get(urldir + URLPAGEAND + pagenr.ToString());
+                }
+                else//make url for fav category
+                {
+                    page = browser.Get(urldir + URLPAGE + pagenr.ToString());
+                }
+                
                 //page = browser.Get(urldir + URLPAGE + "3");
                 doc = browser.getHtmlDocument();
                 //valid.
@@ -144,7 +153,7 @@ namespace WallhavenSyncNm.src
 
             //pause thread to avoid server overload in parallel universe.
             //if you change this, youre a bad and you shoould feel bad.
-            Thread.Sleep(587);
+            Thread.Sleep(666);
 
         }
 

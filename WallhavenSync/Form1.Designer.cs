@@ -130,13 +130,13 @@
             // 
             // buttonDownloadAll
             // 
-            this.buttonDownloadAll.Enabled = false;
             this.buttonDownloadAll.Location = new System.Drawing.Point(315, 162);
             this.buttonDownloadAll.Name = "buttonDownloadAll";
             this.buttonDownloadAll.Size = new System.Drawing.Size(75, 23);
             this.buttonDownloadAll.TabIndex = 10;
             this.buttonDownloadAll.Text = "Sync All";
             this.buttonDownloadAll.UseVisualStyleBackColor = true;
+            this.buttonDownloadAll.Click += new System.EventHandler(this.buttonDownloadAll_Click);
             // 
             // Form1
             // 
