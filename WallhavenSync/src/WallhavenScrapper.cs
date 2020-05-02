@@ -13,9 +13,12 @@ namespace WallhavenSyncNm.src
     {
         private BrowserSession browser;
         private System.Net.WebClient webclient;
+        //temp; part of URL in image address
+        private string suburlprefix;
         private const string URLPAGE = "?page=";
         private const string URLPAGEAND = "&page=";
-        private const string URLDIRECT = "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-";
+        private const string URLDIRECT = "https://w.wallhaven.cc/full/";
+        private const string WALLHAVESTR =  "wallhaven-";
         private const string JPG = ".jpg";
 
 
@@ -48,11 +51,13 @@ namespace WallhavenSyncNm.src
                 return pagec;
         }
 
-        public void scrapeDirectory(string urldir, string savedirectory)
+        public void scrapeDirectory(string urldir, string savedirectory, uint imagecount)
         {
-
+            Boolean blindflag = false;//blind request for page data flag
             int pagenr = 1;
-            int pagecount = 0;
+            double t= Math.Ceiling((double)imagecount / (double)32);
+            double pagecount = t ;
+
             string page = browser.Get(urldir+URLPAGE+pagenr.ToString());
 
             if (page.Contains("id=\"username\" required=\"required\""))
@@ -71,7 +76,8 @@ namespace WallhavenSyncNm.src
             HtmlAgilityPack.HtmlDocument doc = browser.getHtmlDocument();
 
             //check how many pages are there
-            pagecount = getPageCount(doc);
+            //pagecount = getPageCount(doc);
+
             if (pagecount == 0) {
                 Console.WriteLine("Error - couldnt find page length");
                 return;
@@ -93,12 +99,27 @@ namespace WallhavenSyncNm.src
                 //next page
                 pagenr++;
                 //exit on end
+
+                /*
+                //Blind request for more pages since we have no info on page count right now
+                if((pagecount == 1) && !blindflag)
+                {
+                    blindflag = true;
+                    page = browser.Get(urldir + URLPAGE + pagenr.ToString());
+                    doc = browser.getHtmlDocument();
+                    //check how many pages are there
+                    pagecount = getPageCount(doc);
+                    
+                    continue;
+                }
+                */
                 if (pagenr > pagecount)
                 {
                     NotLastPage = false;
                     break;
                 }
 
+                //load more page content
                 if (urldir.Contains("search?q"))//make url for basic search url
                 {
                     page = browser.Get(urldir + URLPAGEAND + pagenr.ToString());
@@ -139,7 +160,8 @@ namespace WallhavenSyncNm.src
             try
             {
                 Console.WriteLine("Downloading: " + imagenumber);//
-                webclient.DownloadFile(URLDIRECT + imagenumber + extension, savedirectory+"\\"+"wallhaven-" + imagenumber + extension);
+                suburlprefix = imagenumber.Substring(0, 2);
+                webclient.DownloadFile(URLDIRECT + suburlprefix + "/" + WALLHAVESTR+ imagenumber + extension, savedirectory + "\\" + "wallhaven-" + imagenumber + extension);
             }
             catch (Exception e)
             {
