@@ -45,6 +45,7 @@
             this.buttonChangeDir = new System.Windows.Forms.Button();
             this.buttonOpenFolder = new System.Windows.Forms.Button();
             this.buttonDownloadAll = new System.Windows.Forms.Button();
+            this.labelImageCountInfo = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -138,11 +139,21 @@
             this.buttonDownloadAll.UseVisualStyleBackColor = true;
             this.buttonDownloadAll.Click += new System.EventHandler(this.buttonDownloadAll_Click);
             // 
+            // labelImageCountInfo
+            // 
+            this.labelImageCountInfo.AutoSize = true;
+            this.labelImageCountInfo.Location = new System.Drawing.Point(190, 64);
+            this.labelImageCountInfo.Name = "labelImageCountInfo";
+            this.labelImageCountInfo.Size = new System.Drawing.Size(170, 13);
+            this.labelImageCountInfo.TabIndex = 11;
+            this.labelImageCountInfo.Text = "Images per page must be set to 32";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(621, 259);
+            this.Controls.Add(this.labelImageCountInfo);
             this.Controls.Add(this.buttonDownloadAll);
             this.Controls.Add(this.buttonOpenFolder);
             this.Controls.Add(this.buttonChangeDir);
@@ -173,6 +184,7 @@
         private System.Windows.Forms.Button buttonChangeDir;
         private System.Windows.Forms.Button buttonOpenFolder;
         private System.Windows.Forms.Button buttonDownloadAll;
+        private System.Windows.Forms.Label labelImageCountInfo;
     }
 }
 

@@ -20,9 +20,10 @@ namespace WallhavenSyncNm.src
         private const string URLDIRECT = "https://w.wallhaven.cc/full/";
         private const string WALLHAVESTR =  "wallhaven-";
         private const string JPG = ".jpg";
+        private int timeouttime = 2500;
+        private double imagecountperpage = 32;
 
-
-
+        public double Imagecountperpage { get => imagecountperpage; set => imagecountperpage = value; }
 
         public WallhavenScrapper(BrowserSession browser)
         {
@@ -55,7 +56,7 @@ namespace WallhavenSyncNm.src
         {
             Boolean blindflag = false;//blind request for page data flag
             int pagenr = 1;
-            double t= Math.Ceiling((double)imagecount / (double)32);
+            double t= Math.Ceiling((double)imagecount / (double)imagecountperpage);
             double pagecount = t ;
 
             string page = browser.Get(urldir+URLPAGE+pagenr.ToString());
@@ -128,6 +129,32 @@ namespace WallhavenSyncNm.src
                 {
                     page = browser.Get(urldir + URLPAGE + pagenr.ToString());
                 }
+
+                //wallhaven blocked us 
+                if (page.Contains("Too Many Requests"))
+                {
+
+                    Thread.Sleep(10000);
+                    timeouttime += 1000;
+                    Console.WriteLine("Too Many Requests. Timeout" + timeouttime.ToString());
+
+                    //quick copypaste //TODO: fix
+                    //load more page content
+                    if (urldir.Contains("search?q"))//make url for basic search url
+                    {
+                        page = browser.Get(urldir + URLPAGEAND + pagenr.ToString());
+                    }
+                    else//make url for fav category
+                    {
+                        page = browser.Get(urldir + URLPAGE + pagenr.ToString());
+                    }
+
+                    if (page.Contains("Too Many Requests"))
+                    {
+                        Console.WriteLine("Too Many Requests. Blocked. Exiting!");
+                        return;
+                    }
+                }
                 
                 //page = browser.Get(urldir + URLPAGE + "3");
                 doc = browser.getHtmlDocument();
@@ -175,7 +202,7 @@ namespace WallhavenSyncNm.src
 
             //pause thread to avoid server overload in parallel universe.
             //if you change this, youre a bad and you shoould feel bad.
-            Thread.Sleep(666);
+            Thread.Sleep(timeouttime);
 
         }
 

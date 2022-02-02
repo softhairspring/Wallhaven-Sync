@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -34,18 +35,22 @@ namespace WallhavenSyncNm.src
             favcategoriesurls = new List<string>();
             favcategoriesimagecount = new List<uint>();
 
+            //force secure SSL/TLS
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
         }
 
         public Boolean login(string user,string password){
+            string inmsg = "logged-in";//"password combination was incorrect";
             browser.Get("https://wallhaven.cc/login");
             browser.FormElements["username"] = user;
             browser.FormElements["password"] = password;
             string response = browser.Post("https://wallhaven.cc/auth/login");
-            //this.setDebugText(response);
-            // confirmation hack
-            if (response.Contains(user)){
-                ISLOGGEDIN = true;
-                return true;      
+                //this.setDebugText(response);
+                // confirmation hack
+            if (response.Contains(inmsg)) {
+                    ISLOGGEDIN = true;
+                    return true;
             }
             ISLOGGEDIN=false;
             return false;
